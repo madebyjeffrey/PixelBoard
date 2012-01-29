@@ -80,28 +80,20 @@ bool checkLinkStatus(GLuint prog)
 
 
 static char const * vertexShader = R"(
-    #ifdef GL_ES_VERSION_2_0
     #version 100  // OpenGL ES 2.0
-    #else
-    #version 120  // OpenGL 2.1
-    #endif
     attribute vec2 coord2d;                  
     void main(void) {                        
       gl_Position = vec4(coord2d, 0.0, 1.0); 
-    };
+    }
     )";
 
 static char const * fragmentShader = R"(
-    #ifdef GL_ES_VERSION_2_0
     #version 100  // OpenGL ES 2.0
-    #else
-    #version 120  // OpenGL 2.1
-    #endif
     void main(void) {        
       gl_FragColor[0] = 0.0; 
       gl_FragColor[1] = 0.0; 
       gl_FragColor[2] = 1.0; 
-    };
+    }
     )";
 
 bool QuadTest::setup(int width, int height)
@@ -131,17 +123,22 @@ bool QuadTest::setup(int width, int height)
     if (!checkLinkStatus(_program))
         return false;
     
+    _width = width;
+    _height = height;
+    
     return true;
 }
 
 void QuadTest::resize(int width, int height)
 {
-    
+    _width = width;
+    _height = height;    
 }
 
 void QuadTest::render()
 {
-    
+    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    glViewport(0, 0, _width, _height);    
     
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);

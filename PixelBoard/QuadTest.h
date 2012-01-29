@@ -19,6 +19,7 @@ private:
     GLuint _program;
     
     GLuint _frameBuffer, _renderBuffer;
+    int _width, _height;
 public:
     bool setup(int width, int height);
     void resize(int width, int height);

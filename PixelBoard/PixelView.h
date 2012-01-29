@@ -13,29 +13,30 @@
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
-#import "Shaders.h"
-#import "matrix.h"
+//#import "Shaders.h"
+//#import "matrix.h"
 
-#import "PixelScene.h"
+//#import "PixelScene.h"
+
+#include "QuadTest.h"
 
 @interface PixelView : UIView
 {
 @private
     EAGLContext *context;
-    PixelPlane *plane;
+    //    PixelPlane *plane;
     
-
-
+    QuadTest *quadScene;
     
     BOOL animating;
-	BOOL displayLinkSupported;
-	NSInteger animationFrameInterval;
+	//BOOL displayLinkSupported;
+	// NSInteger animationFrameInterval;
 	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
 	// CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
 	// The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
 	// isn't available.
 	id displayLink;
-    NSTimer *animationTimer;
+    //NSTimer *animationTimer;
     
 }
 

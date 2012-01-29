@@ -10,21 +10,6 @@
 
 #include "error.h"
 
-// uniform index
-enum {
-	UNIFORM_MODELVIEW_PROJECTION_MATRIX,
-	NUM_UNIFORMS
-};
-GLint uniforms[NUM_UNIFORMS];
-
-// attribute index
-enum {
-	ATTRIB_VERTEX,
-	ATTRIB_COLOR,
-	NUM_ATTRIBUTES
-};
-
-
 @implementation PixelView
 
 @synthesize animating, animationFrameInterval;
@@ -64,12 +49,17 @@ enum {
             return nil;
         }
         
-        displayLinkSupported = YES;
-        animationFrameInterval = 1;
+        animating = YES;
+        
+        //        displayLinkSupported = YES;
+        //animationFrameInterval = 1;
 
-        plane = new PixelPlane(CGSizeMake(170, 170), CGSizeMake(2, 2), CGSizeMake(1,1), 
-                       [UIColor redColor].CGColor);
-        plane->Setup();
+        //        plane = new PixelPlane(CGSizeMake(170, 170), CGSizeMake(2, 2), CGSizeMake(1,1), 
+        //                       [UIColor redColor].CGColor);
+        //        plane->Setup();
+        
+        quadScene = new QuadTest();
+        quadScene->setup(0, 0);
 
         [self resizeFromLayer: (CAEAGLLayer*)self.layer];
     }
@@ -78,71 +68,52 @@ enum {
 }
 
 - (void)render {
-    
-    // Replace the implementation of this method to do your own custom drawing
-    
-/*    const GLfloat squareVertices[] = {
-        -0.5f, -0.5f,
-        0.5f,  -0.5f,
-        -0.5f,  0.5f,
-        0.5f,   0.5f,
-    };
-    const GLubyte squareColors[] = {
-        255, 255,   0, 255,
-        0,   255, 255, 255,
-        0,     0,   0,   0,
-        255,   0, 255, 255,
-    };
-*/	
     [EAGLContext setCurrentContext:context];
+
     
-    glBindFramebuffer(GL_FRAMEBUFFER, plane->defaultFramebuffer);
-        GetError();
-    glViewport(0, 0, plane->backingWidth, plane->backingHeight);
-        GetError();
-    
-    glClearColor(0.5f, 0.4f, 0.5f, 1.0f);
-        GetError();
-    glClear(GL_COLOR_BUFFER_BIT);
-        GetError();
 	
 	// use shader program
     //	glUseProgram(program);
 	
 	// handle viewing matrices
-	GLfloat proj[16]; //, modelview[16], modelviewProj[16];
+    //	GLfloat proj[16]; //, modelview[16], modelviewProj[16];
 	// setup projection matrix (orthographic)
-	mat4f_LoadOrtho(0, 767, 0, 1023, -1.0f, 1.0f, proj);
+	//mat4f_LoadOrtho(0, 767, 0, 1023, -1.0f, 1.0f, proj);
 
-	
-    plane->UpdateProjection(proj);
-    plane->Render();
+	quadScene->render();
+    //plane->UpdateProjection(proj);
+    //plane->Render();
 
-    glBindRenderbuffer(GL_RENDERBUFFER, plane->colorRenderbuffer);
-        GetError();
+    //    glBindRenderbuffer(GL_RENDERBUFFER, plane->colorRenderbuffer);
+    //    GetError();
+    glBindRenderbuffer(GL_RENDERBUFFER, quadScene->renderBuffer());
     [context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
                                                                        
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer
 {
+    GLint width, height;
+    
 	// Allocate color buffer backing based on the current layer size
-    glBindRenderbuffer(GL_RENDERBUFFER, plane->colorRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, quadScene->renderBuffer());
     GetError();
 
     [context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &(plane->backingWidth));
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
         GetError();
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &(plane->backingHeight));
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
         GetError();
 	
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-            GetError();
+        GetError();
         NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         return NO;
     }
-        GetError();
+    GetError();
+    
+    quadScene->resize(width, height);
 	
     return YES;
 }
@@ -150,7 +121,7 @@ enum {
 - (void) dealloc
 {
 	// tear down GL
-	if (plane->defaultFramebuffer)
+/*	if (plane->defaultFramebuffer)
 	{
 		glDeleteFramebuffers(1, &(plane->defaultFramebuffer));
 		plane->defaultFramebuffer = 0;
@@ -162,7 +133,9 @@ enum {
 
 		plane->colorRenderbuffer = 0;
 	}
-	
+*/
+	delete quadScene;
+    
 	// tear down context
 	if ([EAGLContext currentContext] == context)
         [EAGLContext setCurrentContext:nil];
@@ -214,8 +187,8 @@ enum {
 {
 	if (!animating)
 	{
-		if (displayLinkSupported)
-		{
+        //		if (displayLinkSupported)
+        //		{
 			// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
 			// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
 			// not be called in system versions earlier than 3.1.
@@ -223,9 +196,9 @@ enum {
 			displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
 			[displayLink setFrameInterval:animationFrameInterval];
 			[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-		}
-		else
-			animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];
+        //		}
+        //		else
+        //			animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];
 		
 		animating = TRUE;
 	}
@@ -235,16 +208,16 @@ enum {
 {
 	if (animating)
 	{
-		if (displayLinkSupported)
-		{
+        //	if (displayLinkSupported)
+		//{
 			[displayLink invalidate];
 			displayLink = nil;
-		}
-		else
-		{
-			[animationTimer invalidate];
-			animationTimer = nil;
-		}
+		//}
+        //		else
+		//{
+		//	[animationTimer invalidate];
+        //			animationTimer = nil;
+        //		}
 		
 		animating = FALSE;
 	}
