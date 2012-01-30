@@ -274,7 +274,7 @@ void PixelPlane::updateGeometry()
         GetError();
     glEnableVertexAttribArray(attribute_background2D);
         GetError();
-    glVertexAttribPointer(attribute_background2D, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)16);
+    glVertexAttribPointer(attribute_background2D, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)4); // offset 16 of floats
         GetError();
     
     
