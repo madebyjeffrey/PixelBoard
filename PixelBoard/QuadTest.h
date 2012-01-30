@@ -22,6 +22,8 @@ private:
     GLuint _frameBuffer, _renderBuffer;
     int _width, _height;
 public:
+    QuadTest() : _program(0), _vertexBuffer(0), _frameBuffer(0), _renderBuffer(0), _width(0), _height(0) { }
+    
     bool setup(int width, int height);
     void resize(int width, int height);
     

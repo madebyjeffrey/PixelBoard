@@ -181,7 +181,7 @@ bool QuadTest::setup(int width, int height)
     _width = width;
     _height = height;
     
-    updateGeometry();
+    // updateGeometry();
     
     return true;
 }
@@ -228,25 +228,27 @@ void QuadTest::render()
     glValidateProgram(_program);
     checkValidationStatus(_program);
     
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     GetError();
     
 }
 
 void QuadTest::updateGeometry()
 {
-    /*
-    GLfloat vertices[] = {
-        0.0, 0.8,
-        -0.8, -0.8,
-        0.8, -0.8,
-    };*/
+    std::cerr << "Size: " << _width << " x " << _height << std::endl;
     
-    GLfloat vertices[] = {
-        20.0, 20,
-        1024-20, 20,
-        1024-20, 768-20,
-    };
+    std::vector<GLfloat> vertices;
+    vertices.push_back(5.0);
+    vertices.push_back(5.0);
+    
+    vertices.push_back(_width - 5.0);
+    vertices.push_back(5.0);
+    
+    vertices.push_back(5.0);
+    vertices.push_back(_height - 5.0);
+    
+    vertices.push_back(_width - 5.0);
+    vertices.push_back(_height - 5.0);
     
     //    size_t const v_index = 0;
     //    size_t const v_size = sizeof(GLfloat) * 4 * 4;
@@ -264,8 +266,9 @@ void QuadTest::updateGeometry()
     
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     GetError();
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    std::cerr << "size of vector: " << vertices.size() * sizeof(GLfloat) << std::endl;
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+
     GetError();
     
     glUseProgram(_program);
