@@ -35,14 +35,10 @@ attribute vec4 background2d;
 uniform mat4 transform;
 
 varying lowp vec2 texture;
-varying lowp vec2 position;
-varying lowp vec4 background;
 
 void main(void) {                        
     gl_Position = transform * vec4(coord2d, 0.0, 1.0); 
     texture = texcoord2d;
-    position = coord2d;
-    background = background2d;
 }
 )";
 
@@ -53,46 +49,9 @@ static char const * fragmentShader = R"(
     varying lowp vec2 texture;
     uniform sampler2D s_texture;
     uniform sampler2D g_texture;
-    uniform highp vec2 cellsize;
-    uniform lowp vec2 imageSize;
-    uniform lowp vec2 margin;
-    varying lowp vec2 position;
-    varying lowp vec4 background;
 
     void main(void) {        
-        //        gl_FragColor = texture2D(s_texture, texture);
-/*        highp vec2 pos = position - margin;
-        highp vec2 total_cell = cellsize + vec2(1,1);
-        
-        highp float xmod = mod(floor(pos.x), floor(total_cell.x));
-        highp float ymod = mod(floor(pos.y), floor(total_cell.y));
-        
-        highp float p = clamp(xmod + ymod, 0.0, 1.0);
-        
-        gl_FragColor = texture2D(s_texture, texture); */
-        
-        //        highp vec3 g = vec3(texture, 255);
         gl_FragColor = texture2D(s_texture, texture) * (texture2D(g_texture, texture).a);
-        //highp float backProp = float (xmod < 0.2 || ymod < 0.2);
-        
-        //        gl_FragColor = backProp * background + (1.0 - backProp) * texture2D(s_texture, texture);
-
-        /*
-        if (xmod == 0.0 || ymod == 0.0)
-        {
-                   gl_FragColor = background; //vec4(0, 0, 0, 0);
-                }
-                else
-                {
-            //            highp vec2 texpos = vec2(pos.x / 320.0, pos.y / 240.0);
-                    gl_FragColor = background; //texture2D(s_texture, texture);
-                }
-            //vec4(1, 0, 0, 0); //texture2D(s_texture, texture);
-            //        }*/
-/*        gl_FragColor[0] = 0.0; 
-        gl_FragColor[1] = 0.0; 
-        gl_FragColor[2] = 1.0;  */
-        
     }
 )";
 
@@ -290,12 +249,6 @@ void PixelPlane::updateGeometry()
     glVertexAttribPointer(attribute_texture, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(8*sizeof(GLfloat)));
     GetError();
     
-    GLuint attribute_background2D = glGetAttribLocation(_program, "background2d");
-        GetError();
-    glEnableVertexAttribArray(attribute_background2D);
-        GetError();
-    glVertexAttribPointer(attribute_background2D, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(16*sizeof(GLfloat))); // offset 16 of floats
-        GetError();
     
     
     GLuint uniform_texture = glGetUniformLocation(_program, "s_texture");
@@ -305,22 +258,6 @@ void PixelPlane::updateGeometry()
     GLuint uniform_texture_grid = glGetUniformLocation(_program, "g_texture");
     GetError();
     glUniform1i(uniform_texture_grid, 1);
-    
-    GLuint uniform_cellsize = glGetUniformLocation(_program, "cellsize");
-            GetError();
-    GLfloat cellsize[2];
-    cellsize[0] = floor(_width / _vwidth) - 1.0;
-    cellsize[1] = floor(_height / _vheight) - 1.0;
-    
-    std::cerr << "Cell Size: " << cellsize[0] << " x " << cellsize[1] << std::endl;
-    glUniform2fv(uniform_cellsize, 1, cellsize);
-            GetError();
-    
-    GLuint uniform_imageSize = glGetUniformLocation(_program, "imageSize");
-    glUniform2f(uniform_imageSize, _vwidth, _vheight);
-    
-    GLuint uniform_margin = glGetUniformLocation(_program, "margin");
-    glUniform2f(uniform_margin, (_width % _vwidth)/2, (_height % _vheight)/2);
 }
 
 void PixelPlane::updateTexture()

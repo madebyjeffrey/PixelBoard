@@ -229,3 +229,5 @@ QuadTest::~QuadTest()
 {
     glDeleteProgram(_program);
 }
+
+

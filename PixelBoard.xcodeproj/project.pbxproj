@@ -39,6 +39,7 @@
 		7604820D14D5D5B90001C723 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		7604820E14D5ED580001C723 /* QuadTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuadTest.cpp; sourceTree = "<group>"; };
 		7604821014D5ED640001C723 /* QuadTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuadTest.h; sourceTree = "<group>"; };
+		7611B79614D70E5300F2EE82 /* Image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		763DED6114D1381900CAA3ED /* PixelBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		763DED6514D1381900CAA3ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		763DED6714D1381900CAA3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -137,6 +138,7 @@
 				763DED7A14D1381A00CAA3ED /* ViewController.xib */,
 				763DED6C14D1381900CAA3ED /* Supporting Files */,
 				7604820D14D5D5B90001C723 /* error.h */,
+				7611B79614D70E5300F2EE82 /* Image.cpp */,
 			);
 			path = PixelBoard;
 			sourceTree = "<group>";
