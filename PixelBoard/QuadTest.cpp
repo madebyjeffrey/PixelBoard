@@ -17,6 +17,7 @@
 
 #include "QuadTest.h"
 #include "error.h"
+#include "matrix.h"
 
 bool checkCompileStatus(GLuint shader);
 bool checkLinkStatus(GLuint prog);
@@ -101,9 +102,12 @@ bool checkValidationStatus(GLuint prog)
 
 static char const * vertexShader = R"(
     #version 100  // OpenGL ES 2.0
-    attribute vec2 coord2d;                  
+    attribute vec2 coord2d;      
+
+    uniform mat4 transform;
+
     void main(void) {                        
-      gl_Position = vec4(coord2d, 0.0, 1.0); 
+      gl_Position = transform * vec4(coord2d, 0.0, 1.0); 
     }
     )";
 
@@ -185,7 +189,17 @@ bool QuadTest::setup(int width, int height)
 void QuadTest::resize(int width, int height)
 {
     _width = width;
-    _height = height;    
+    _height = height;
+    
+    GLfloat m[16];
+    
+    glUseProgram(_program);
+    
+    mat4f_LoadOrtho(0, width, 0, height, 1.0, -1.0, m);
+    GLuint transform = glGetUniformLocation(_program, "transform");
+    
+    glUniformMatrix4fv(transform, 1, GL_FALSE, m);
+    
     updateGeometry();
 }
 
@@ -207,7 +221,6 @@ void QuadTest::render()
     glUseProgram(_program);
     GetError();
 
-
     
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     GetError();
@@ -222,11 +235,17 @@ void QuadTest::render()
 
 void QuadTest::updateGeometry()
 {
-    
+    /*
     GLfloat vertices[] = {
         0.0, 0.8,
         -0.8, -0.8,
         0.8, -0.8,
+    };*/
+    
+    GLfloat vertices[] = {
+        20.0, 20,
+        1024-20, 20,
+        1024-20, 768-20,
     };
     
     //    size_t const v_index = 0;
