@@ -49,7 +49,8 @@
             return nil;
         }
         
-        animating = YES;
+        //        animating = YES;
+
         
         //        displayLinkSupported = YES;
         //animationFrameInterval = 1;
@@ -68,6 +69,8 @@
         scene->setup(0, 0, 320, 240);
 
         [self resizeFromLayer: (CAEAGLLayer*)self.layer];
+        
+                [self startAnimation];
     }
     
     return self;

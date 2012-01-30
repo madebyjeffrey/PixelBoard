@@ -21,6 +21,7 @@ private:
     GLuint _program;
     GLuint _vertexBuffer;
     GLuint _texture;
+    GLuint _textureGrid;
     
     GLuint _frameBuffer, _renderBuffer;
     int _width, _height;
@@ -32,6 +33,7 @@ public:
     typedef struct { unsigned alpha : 4;  unsigned blue : 4; unsigned green : 4; unsigned red : 4;} pixel_type;
     
     std::vector<pixel_type> _image;
+    std::vector<unsigned char> _imageGrid;
     
 public:
     

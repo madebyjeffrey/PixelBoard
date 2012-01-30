@@ -34,9 +34,9 @@ attribute vec4 background2d;
 
 uniform mat4 transform;
 
-varying highp vec2 texture;
-varying highp vec2 position;
-varying highp vec4 background;
+varying lowp vec2 texture;
+varying lowp vec2 position;
+varying lowp vec4 background;
 
 void main(void) {                        
     gl_Position = transform * vec4(coord2d, 0.0, 1.0); 
@@ -50,32 +50,45 @@ static char const * fragmentShader = R"(
 
     #version 100  // OpenGL ES 2.0
 
-    varying highp vec2 texture;
+    varying lowp vec2 texture;
     uniform sampler2D s_texture;
+    uniform sampler2D g_texture;
     uniform highp vec2 cellsize;
-    uniform highp vec2 imageSize;
-    uniform highp vec2 margin;
-    varying highp vec2 position;
-    varying highp vec4 background;
+    uniform lowp vec2 imageSize;
+    uniform lowp vec2 margin;
+    varying lowp vec2 position;
+    varying lowp vec4 background;
 
     void main(void) {        
         //        gl_FragColor = texture2D(s_texture, texture);
-        highp vec2 pos = position - margin;
+/*        highp vec2 pos = position - margin;
         highp vec2 total_cell = cellsize + vec2(1,1);
         
         highp float xmod = mod(floor(pos.x), floor(total_cell.x));
         highp float ymod = mod(floor(pos.y), floor(total_cell.y));
         
+        highp float p = clamp(xmod + ymod, 0.0, 1.0);
+        
+        gl_FragColor = texture2D(s_texture, texture); */
+        
+        //        highp vec3 g = vec3(texture, 255);
+        gl_FragColor = texture2D(s_texture, texture) * (texture2D(g_texture, texture).a);
+        //highp float backProp = float (xmod < 0.2 || ymod < 0.2);
+        
+        //        gl_FragColor = backProp * background + (1.0 - backProp) * texture2D(s_texture, texture);
+
+        /*
         if (xmod == 0.0 || ymod == 0.0)
         {
-            gl_FragColor = background; //vec4(0, 0, 0, 0);
-        }
-        else
-        {
+                   gl_FragColor = background; //vec4(0, 0, 0, 0);
+                }
+                else
+                {
             //            highp vec2 texpos = vec2(pos.x / 320.0, pos.y / 240.0);
-            gl_FragColor = texture2D(s_texture, texture);
+                    gl_FragColor = background; //texture2D(s_texture, texture);
+                }
             //vec4(1, 0, 0, 0); //texture2D(s_texture, texture);
-        }
+            //        }*/
 /*        gl_FragColor[0] = 0.0; 
         gl_FragColor[1] = 0.0; 
         gl_FragColor[2] = 1.0;  */
@@ -289,6 +302,9 @@ void PixelPlane::updateGeometry()
         GetError();
     glUniform1i(uniform_texture, 0);
         GetError();
+    GLuint uniform_texture_grid = glGetUniformLocation(_program, "g_texture");
+    GetError();
+    glUniform1i(uniform_texture_grid, 1);
     
     GLuint uniform_cellsize = glGetUniformLocation(_program, "cellsize");
             GetError();
@@ -310,7 +326,7 @@ void PixelPlane::updateGeometry()
 void PixelPlane::updateTexture()
 {
     _image.clear();
-    
+
 /*
     pixel_type pixel = { 15, 0, 0, 15 };
     pixel_type blue = { 0, 15, 15, 15 };
@@ -359,9 +375,19 @@ void PixelPlane::updateTexture()
     //    _image[0] = blue;
     //    _image[1] = blue;
     
+    _imageGrid.clear();
+    _imageGrid.reserve(_vwidth * _vheight * 9);
+    
+    for (int x = 0; x < _vwidth * 3; ++x)
+        for (int y = 0; y < _vheight * 3; ++y)
+        {
+            _imageGrid[y * (_vwidth * 3) + x] = ((x % 3 == 0) || (y % 3) == 0) ? 0.0 : 255.0;
+        }
+    
     if (_texture)
     {
         glDeleteTextures(1, &_texture);
+        glDeleteTextures(1, &_textureGrid);
     }
     
     glGenTextures(1, &_texture);
@@ -383,6 +409,25 @@ void PixelPlane::updateTexture()
             GetError();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             GetError();
+
+    
+    glGenTextures(1, &_textureGrid);
+    GetError();
+    glActiveTexture(GL_TEXTURE1);
+    GetError();
+    glBindTexture(GL_TEXTURE_2D, _textureGrid);
+    GetError();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, _vwidth * 3, _vheight * 3, 0, GL_ALPHA, GL_UNSIGNED_BYTE, _imageGrid.data());
+    GetError();
+    
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GetError();
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+    GetError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GetError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GetError();
 
 }
 
