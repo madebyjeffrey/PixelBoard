@@ -14,8 +14,6 @@
 
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
-//#import <QuartzCore/QuartzCore.h>
-
 
 #include "QuadTest.h"
 #include "error.h"
@@ -44,10 +42,6 @@ bool checkCompileStatus(GLuint shader)
     if (status == GL_FALSE)
     {
         std::cerr << "Failed to compile shader." << std::endl;
-        //        NSLog(@"Failed to compile shader:\n");
-        //		int i;
-        //		for (i = 0; i < count; i++)
-        //        NSLog(@"%s", sources); //[i]);
     }
     
     return status;
@@ -78,7 +72,32 @@ bool checkLinkStatus(GLuint prog)
 	
 	return status;
 }
-
+bool checkValidationStatus(GLuint prog);
+bool checkValidationStatus(GLuint prog)
+{
+	GLint status;
+	
+#if defined(DEBUG)
+	GLint logLength;
+    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0)
+    {
+        GLchar *log = new GLchar[logLength]; // (GLchar *)malloc(logLength);
+        glGetProgramInfoLog(prog, logLength, &logLength, log);
+        std::cerr << "Program validate log:" << std::endl;
+        std::cerr << log << std::endl;
+        
+        delete log;
+    }
+#endif
+    
+    glGetProgramiv(prog, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE)
+        //	NSLog(@"Failed to link program %d", prog);
+        std::cerr << "Failed to validate program " << prog << std::endl;
+	
+	return status;
+}
 
 static char const * vertexShader = R"(
     #version 100  // OpenGL ES 2.0
@@ -187,9 +206,14 @@ void QuadTest::render()
     
     glUseProgram(_program);
     GetError();
+
+
     
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     GetError();
+    
+    glValidateProgram(_program);
+    checkValidationStatus(_program);
     
     glDrawArrays(GL_TRIANGLES, 0, 3);
     GetError();
@@ -209,6 +233,12 @@ void QuadTest::updateGeometry()
     //    size_t const v_size = sizeof(GLfloat) * 4 * 4;
     //    size_t const t_index = v_index + v_size;
     //    size_t const t_size = sizeof(GLfloat) * 2 * 4;
+    
+    if (_vertexBuffer)
+    {
+        glDeleteBuffers(1, &_vertexBuffer);
+        GetError();
+    }
     
     glGenBuffers(1, &_vertexBuffer);
     GetError();
