@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7604820514D288E60001C723 /* PixelScene.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7604820414D288E60001C723 /* PixelScene.mm */; };
+		7604820514D288E60001C723 /* PixelPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7604820414D288E60001C723 /* PixelPlane.cpp */; };
 		7604820F14D5ED580001C723 /* QuadTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7604820E14D5ED580001C723 /* QuadTest.cpp */; };
 		763DED6614D1381900CAA3ED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED6514D1381900CAA3ED /* UIKit.framework */; };
 		763DED6814D1381900CAA3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED6714D1381900CAA3ED /* Foundation.framework */; };
@@ -23,7 +23,7 @@
 		763DED8E14D1417D00CAA3ED /* template.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 763DED8B14D1416100CAA3ED /* template.vsh */; };
 		763DED8F14D1418300CAA3ED /* template.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 763DED8A14D1416100CAA3ED /* template.fsh */; };
 		763DED9414D143E900CAA3ED /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 763DED9314D1435300CAA3ED /* matrix.cpp */; };
-		763DED9514D143EC00CAA3ED /* Shaders.mm in Sources */ = {isa = PBXBuildFile; fileRef = 763DED9114D141C900CAA3ED /* Shaders.mm */; };
+		763DED9514D143EC00CAA3ED /* Shaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 763DED9114D141C900CAA3ED /* Shaders.cpp */; };
 		763DED9D14D1464700CAA3ED /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9614D1463F00CAA3ED /* Icon-72.png */; };
 		763DED9E14D1464A00CAA3ED /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9714D1463F00CAA3ED /* Icon-Small-50.png */; };
 		763DED9F14D1464D00CAA3ED /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9814D1463F00CAA3ED /* Icon-Small.png */; };
@@ -34,8 +34,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7604820414D288E60001C723 /* PixelScene.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PixelScene.mm; sourceTree = "<group>"; };
-		7604820714D289080001C723 /* PixelScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelScene.h; sourceTree = "<group>"; };
+		7604820414D288E60001C723 /* PixelPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelPlane.cpp; sourceTree = "<group>"; };
+		7604820714D289080001C723 /* PixelPlane.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelPlane.h; sourceTree = "<group>"; };
 		7604820D14D5D5B90001C723 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		7604820E14D5ED580001C723 /* QuadTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuadTest.cpp; sourceTree = "<group>"; };
 		7604821014D5ED640001C723 /* QuadTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuadTest.h; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 		763DED8A14D1416100CAA3ED /* template.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = template.fsh; sourceTree = "<group>"; };
 		763DED8B14D1416100CAA3ED /* template.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = template.vsh; sourceTree = "<group>"; };
 		763DED9014D141C900CAA3ED /* Shaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shaders.h; sourceTree = "<group>"; };
-		763DED9114D141C900CAA3ED /* Shaders.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Shaders.mm; sourceTree = "<group>"; };
+		763DED9114D141C900CAA3ED /* Shaders.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shaders.cpp; sourceTree = "<group>"; };
 		763DED9214D1435300CAA3ED /* matrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
 		763DED9314D1435300CAA3ED /* matrix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = matrix.cpp; sourceTree = "<group>"; };
 		763DED9614D1463F00CAA3ED /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
@@ -122,16 +122,16 @@
 				763DED9214D1435300CAA3ED /* matrix.h */,
 				763DED9314D1435300CAA3ED /* matrix.cpp */,
 				763DED9014D141C900CAA3ED /* Shaders.h */,
-				763DED9114D141C900CAA3ED /* Shaders.mm */,
+				763DED9114D141C900CAA3ED /* Shaders.cpp */,
 				763DED8914D1415200CAA3ED /* Resources */,
 				763DED7414D1381900CAA3ED /* AppDelegate.h */,
 				763DED7514D1381900CAA3ED /* AppDelegate.mm */,
 				763DED8214D1384B00CAA3ED /* PixelView.h */,
 				763DED8314D1384B00CAA3ED /* PixelView.mm */,
-				7604820714D289080001C723 /* PixelScene.h */,
-				7604820414D288E60001C723 /* PixelScene.mm */,
-				7604820E14D5ED580001C723 /* QuadTest.cpp */,
+				7604820714D289080001C723 /* PixelPlane.h */,
+				7604820414D288E60001C723 /* PixelPlane.cpp */,
 				7604821014D5ED640001C723 /* QuadTest.h */,
+				7604820E14D5ED580001C723 /* QuadTest.cpp */,
 				763DED7714D1381900CAA3ED /* ViewController.h */,
 				763DED7814D1381A00CAA3ED /* ViewController.mm */,
 				763DED7A14D1381A00CAA3ED /* ViewController.xib */,
@@ -239,13 +239,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				763DED9514D143EC00CAA3ED /* Shaders.mm in Sources */,
+				763DED9514D143EC00CAA3ED /* Shaders.cpp in Sources */,
 				763DED9414D143E900CAA3ED /* matrix.cpp in Sources */,
 				763DED7214D1381900CAA3ED /* main.m in Sources */,
 				763DED7614D1381900CAA3ED /* AppDelegate.mm in Sources */,
 				763DED7914D1381A00CAA3ED /* ViewController.mm in Sources */,
 				763DED8414D1384B00CAA3ED /* PixelView.mm in Sources */,
-				7604820514D288E60001C723 /* PixelScene.mm in Sources */,
+				7604820514D288E60001C723 /* PixelPlane.cpp in Sources */,
 				7604820F14D5ED580001C723 /* QuadTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

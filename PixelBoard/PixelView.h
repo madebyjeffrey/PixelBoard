@@ -18,7 +18,8 @@
 
 //#import "PixelScene.h"
 
-#include "QuadTest.h"
+//#include "QuadTest.h"
+#include "PixelPlane.h"
 
 @interface PixelView : UIView
 {
@@ -26,7 +27,8 @@
     EAGLContext *context;
     //    PixelPlane *plane;
     
-    QuadTest *quadScene;
+    //    QuadTest *quadScene;
+    PixelPlane *scene;
     
     BOOL animating;
 	//BOOL displayLinkSupported;

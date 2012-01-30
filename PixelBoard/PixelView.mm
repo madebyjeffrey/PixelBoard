@@ -58,8 +58,10 @@
         //                       [UIColor redColor].CGColor);
         //        plane->Setup();
         
-        quadScene = new QuadTest();
-        quadScene->setup(0, 0);
+        //        quadScene = new QuadTest();
+        //        quadScene->setup(0, 0);
+        scene = new PixelPlane();
+        scene->setup(0, 0, 320, 240);
 
         [self resizeFromLayer: (CAEAGLLayer*)self.layer];
     }
@@ -80,13 +82,13 @@
 	// setup projection matrix (orthographic)
 	//mat4f_LoadOrtho(0, 767, 0, 1023, -1.0f, 1.0f, proj);
 
-	quadScene->render();
+	scene->render();
     //plane->UpdateProjection(proj);
     //plane->Render();
 
     //    glBindRenderbuffer(GL_RENDERBUFFER, plane->colorRenderbuffer);
     //    GetError();
-    glBindRenderbuffer(GL_RENDERBUFFER, quadScene->renderBuffer());
+    glBindRenderbuffer(GL_RENDERBUFFER, scene->renderBuffer());
     [context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
@@ -96,7 +98,7 @@
     GLint width, height;
     
 	// Allocate color buffer backing based on the current layer size
-    glBindRenderbuffer(GL_RENDERBUFFER, quadScene->renderBuffer());
+    glBindRenderbuffer(GL_RENDERBUFFER, scene->renderBuffer());
     GetError();
 
     [context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
@@ -113,7 +115,7 @@
     }
     GetError();
     
-    quadScene->resize(width, height);
+    scene->resize(width, height);
 	
     return YES;
 }
@@ -134,7 +136,7 @@
 		plane->colorRenderbuffer = 0;
 	}
 */
-	delete quadScene;
+	delete scene;
     
 	// tear down context
 	if ([EAGLContext currentContext] == context)

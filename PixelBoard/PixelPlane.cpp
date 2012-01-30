@@ -1,5 +1,5 @@
 //
-//  QuadTest.cpp
+//  PixelPlane.cpp
 //  PixelBoard
 //
 //  Created by Jeffrey Drake on 12-01-29.
@@ -15,41 +15,51 @@
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
-#include "QuadTest.h"
+#include "PixelPlane.h"
 #include "error.h"
 #include "matrix.h"
-
 #include "Shaders.h"
 
 
 static char const * vertexShader = R"(
-    #version 100  // OpenGL ES 2.0
-    attribute vec2 coord2d;      
+#version 100  // OpenGL ES 2.0
+attribute vec2 coord2d;
+attribute vec2 texcoord2d;
 
-    uniform mat4 transform;
+uniform mat4 transform;
 
-    void main(void) {                        
-      gl_Position = transform * vec4(coord2d, 0.0, 1.0); 
-    }
-    )";
+varying highp vec2 texture;
+
+void main(void) {                        
+    gl_Position = transform * vec4(coord2d, 0.0, 1.0); 
+    texture = texcoord2d;
+}
+)";
 
 static char const * fragmentShader = R"(
-    #version 100  // OpenGL ES 2.0
-    void main(void) {        
-      gl_FragColor[0] = 0.0; 
-      gl_FragColor[1] = 0.0; 
-      gl_FragColor[2] = 1.0; 
-    }
-    )";
 
-bool QuadTest::setup(int width, int height)
+    #version 100  // OpenGL ES 2.0
+
+    varying highp vec2 texture;
+    uniform sampler2D s_texture;
+
+    void main(void) {        
+        gl_FragColor = texture2D(s_texture, texture);
+/*        gl_FragColor[0] = 0.0; 
+        gl_FragColor[1] = 0.0; 
+        gl_FragColor[2] = 1.0;  */
+        
+    }
+)";
+
+bool PixelPlane::setup(int screenWidth, int screenHeight, int virtualWidth, int virtualHeight)
 {
     glGenFramebuffers(1, &_frameBuffer);
     GetError();
     
     glGenRenderbuffers(1, &_renderBuffer);
     GetError();
-
+    
     
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     GetError();
@@ -60,7 +70,7 @@ bool QuadTest::setup(int width, int height)
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer);
     GetError();
     
-
+    
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
     GetError();
     
@@ -100,15 +110,18 @@ bool QuadTest::setup(int width, int height)
     if (!checkLinkStatus(_program))
         return false;
     
-    _width = width;
-    _height = height;
+    _width = screenWidth;
+    _height = screenHeight;
+    _vwidth = virtualWidth;
+    _vheight = virtualHeight;
     
     // updateGeometry();
+    updateTexture();
     
     return true;
 }
 
-void QuadTest::resize(int width, int height)
+void PixelPlane::resize(int width, int height)
 {
     _width = width;
     _height = height;
@@ -125,7 +138,7 @@ void QuadTest::resize(int width, int height)
     updateGeometry();
 }
 
-void QuadTest::render()
+void PixelPlane::render()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     GetError();
@@ -142,7 +155,7 @@ void QuadTest::render()
     
     glUseProgram(_program);
     GetError();
-
+    
     
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     GetError();
@@ -155,22 +168,36 @@ void QuadTest::render()
     
 }
 
-void QuadTest::updateGeometry()
+void PixelPlane::updateGeometry()
 {
     std::cerr << "Size: " << _width << " x " << _height << std::endl;
     
     std::vector<GLfloat> vertices;
-    vertices.push_back(5.0);
-    vertices.push_back(5.0);
+    vertices.push_back(0.0);
+    vertices.push_back(0.0);
     
-    vertices.push_back(_width - 5.0);
-    vertices.push_back(5.0);
+    vertices.push_back(_width);
+    vertices.push_back(0.0);
     
-    vertices.push_back(5.0);
-    vertices.push_back(_height - 5.0);
+    vertices.push_back(0.0);
+    vertices.push_back(_height);
     
-    vertices.push_back(_width - 5.0);
-    vertices.push_back(_height - 5.0);
+    vertices.push_back(_width);
+    vertices.push_back(_height);
+
+    vertices.push_back(0.0);
+    vertices.push_back(0.0);
+    
+    vertices.push_back(1.0);
+    vertices.push_back(0.0);
+    
+    vertices.push_back(0.0);
+    vertices.push_back(1.0);
+    
+    vertices.push_back(1.0);
+    vertices.push_back(1.0);
+
+
     
     //    size_t const v_index = 0;
     //    size_t const v_size = sizeof(GLfloat) * 4 * 4;
@@ -190,7 +217,7 @@ void QuadTest::updateGeometry()
     GetError();
     std::cerr << "size of vector: " << vertices.size() * sizeof(GLfloat) << std::endl;
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
-
+    
     GetError();
     
     glUseProgram(_program);
@@ -204,7 +231,7 @@ void QuadTest::updateGeometry()
         std::cerr << "Could not bind attribute coord2d" << std::endl;
         return;
     }
-
+    
     glEnableVertexAttribArray(attribute_coord2d);
     GetError();
     
@@ -212,20 +239,69 @@ void QuadTest::updateGeometry()
     glVertexAttribPointer(attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, 0);
     GetError();
     
+    GLuint attribute_texture = glGetAttribLocation(_program, "texcoord2d");
+        GetError();
+    glEnableVertexAttribArray(attribute_texture);
+        GetError();
+    
+    glVertexAttribPointer(attribute_texture, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)8);
+        GetError();
+    
+    GLuint uniform_texture = glGetUniformLocation(_program, "s_texture");
+        GetError();
+    glUniform1i(uniform_texture, 0);
+        GetError();
+    
+    
+}
+
+void PixelPlane::updateTexture()
+{
+    _image.clear();
+    
+    pixel_type pixel = { 15, 0, 0, 15 };
+
+
+    std::fill_n(std::back_inserter(_image), _vwidth * _vheight, pixel);
+    
+    if (_texture)
+    {
+        glDeleteTextures(1, &_texture);
+    }
+    
+    glGenTextures(1, &_texture);
+    GetError();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture);
+        GetError();
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _vwidth, _vheight, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, _image.data());
+        GetError();
+    
+    
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            GetError();
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+            GetError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            GetError();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            GetError();
 
 }
 
-GLuint QuadTest::frameBuffer()
+GLuint PixelPlane::frameBuffer()
 {
     return _frameBuffer;
 }
 
-GLuint QuadTest::renderBuffer()
+GLuint PixelPlane::renderBuffer()
 {
     return _renderBuffer;
 }
 
-QuadTest::~QuadTest()
+PixelPlane::~PixelPlane()
 {
     glDeleteProgram(_program);
 }
