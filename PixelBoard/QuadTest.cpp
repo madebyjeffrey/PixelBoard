@@ -18,6 +18,7 @@
 
 
 #include "QuadTest.h"
+#include "error.h"
 
 bool checkCompileStatus(GLuint shader);
 bool checkLinkStatus(GLuint prog);
@@ -99,32 +100,65 @@ static char const * fragmentShader = R"(
 bool QuadTest::setup(int width, int height)
 {
     glGenFramebuffers(1, &_frameBuffer);
+    GetError();
+    
     glGenRenderbuffers(1, &_renderBuffer);
+    GetError();
+
+    
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    GetError();
+    
     glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffer);
+    GetError();
+    
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer);
+    GetError();
+    
 
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    GetError();
+    
     glShaderSource(vs, 1, &vertexShader, NULL);
+    GetError();
+    
     glCompileShader(vs);
+    GetError();
+    
     if (!checkCompileStatus(vs))
         return false;
     
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    GetError();
+    
     glShaderSource(fs, 1, &fragmentShader, NULL);
+    GetError();
+    
     glCompileShader(fs);
+    GetError();
+    
     if (!checkCompileStatus(fs))
         return false;
     
     _program = glCreateProgram();
+    GetError();
+    
     glAttachShader(_program, vs);
+    GetError();
+    
     glAttachShader(_program, fs);
+    GetError();
+    
     glLinkProgram(_program);
+    GetError();
+    
     if (!checkLinkStatus(_program))
         return false;
     
     _width = width;
     _height = height;
+    
+    updateGeometry();
     
     return true;
 }
@@ -133,35 +167,78 @@ void QuadTest::resize(int width, int height)
 {
     _width = width;
     _height = height;    
+    updateGeometry();
 }
 
 void QuadTest::render()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    GetError();
+    
     glViewport(0, 0, _width, _height);    
+    GetError();
+    
     
     glClearColor(1.0, 1.0, 1.0, 1.0);
+    GetError();
+    
     glClear(GL_COLOR_BUFFER_BIT);
+    GetError();
     
     glUseProgram(_program);
-    GLuint attribute_coord2d = glGetAttribLocation(_program, "coord2d");
-    if (attribute_coord2d == -1)
-    {
-        std::cerr << "Could not bind attribute coord2d" << std::endl;
-        return;
-    }
+    GetError();
     
-    glEnableVertexAttribArray(attribute_coord2d);
-    GLfloat triangle_vertices[] = {
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    GetError();
+    
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    GetError();
+    
+}
+
+void QuadTest::updateGeometry()
+{
+    
+    GLfloat vertices[] = {
         0.0, 0.8,
         -0.8, -0.8,
         0.8, -0.8,
     };
     
-    glVertexAttribPointer(attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, triangle_vertices);
+    //    size_t const v_index = 0;
+    //    size_t const v_size = sizeof(GLfloat) * 4 * 4;
+    //    size_t const t_index = v_index + v_size;
+    //    size_t const t_size = sizeof(GLfloat) * 2 * 4;
     
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableVertexAttribArray(attribute_coord2d);
+    glGenBuffers(1, &_vertexBuffer);
+    GetError();
+    
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    GetError();
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    GetError();
+    
+    glUseProgram(_program);
+    GetError();
+    
+    GLuint attribute_coord2d = glGetAttribLocation(_program, "coord2d");
+    GetError();
+    
+    if (attribute_coord2d == -1)
+    {
+        std::cerr << "Could not bind attribute coord2d" << std::endl;
+        return;
+    }
+
+    glEnableVertexAttribArray(attribute_coord2d);
+    GetError();
+    
+    
+    glVertexAttribPointer(attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    GetError();
+    
+
 }
 
 GLuint QuadTest::frameBuffer()

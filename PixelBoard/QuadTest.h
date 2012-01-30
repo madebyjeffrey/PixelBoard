@@ -17,6 +17,7 @@ class QuadTest
 {
 private:
     GLuint _program;
+    GLuint _vertexBuffer;
     
     GLuint _frameBuffer, _renderBuffer;
     int _width, _height;
@@ -28,6 +29,8 @@ public:
     
     GLuint frameBuffer();
     GLuint renderBuffer();
+    
+    void updateGeometry();
     
     virtual ~QuadTest();
     
