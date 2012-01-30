@@ -61,6 +61,10 @@
         //        quadScene = new QuadTest();
         //        quadScene->setup(0, 0);
         scene = new PixelPlane();
+        
+        NSArray *s = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        scene->documentsLocation = [[s objectAtIndex:0] UTF8String];
+        
         scene->setup(0, 0, 320, 240);
 
         [self resizeFromLayer: (CAEAGLLayer*)self.layer];
@@ -68,6 +72,7 @@
     
     return self;
 }
+
 
 - (void)render {
     [EAGLContext setCurrentContext:context];

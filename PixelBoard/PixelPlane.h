@@ -27,15 +27,19 @@ private:
     int _vwidth, _vheight;
     
     
+public:
     //typedef std::array<GLfloat, 4> pixel_type;
-    typedef struct { unsigned red : 4; unsigned green : 4; unsigned blue : 4; unsigned alpha : 4;} pixel_type;
+    typedef struct { unsigned alpha : 4;  unsigned blue : 4; unsigned green : 4; unsigned red : 4;} pixel_type;
     
     std::vector<pixel_type> _image;
     
 public:
+    
+    const char *documentsLocation;
+    
     PixelPlane() : _program(0), _vertexBuffer(0), 
                    _frameBuffer(0), _renderBuffer(0), 
-                   _width(0), _height(0), _vwidth(0), _vheight(0)
+    _width(0), _height(0), _vwidth(0), _vheight(0), documentsLocation(NULL)
                    { }
     
     bool setup(int screenWidth, int screenHeight, int virtualWidth, int virtualHeight);
