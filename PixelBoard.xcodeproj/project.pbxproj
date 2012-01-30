@@ -70,6 +70,7 @@
 		763DED9A14D1463F00CAA3ED /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		763DED9B14D1463F00CAA3ED /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		763DED9C14D1463F00CAA3ED /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
+		769009DB14D73F5F00B296DE /* cat1.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = cat1.tga; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +158,7 @@
 		763DED8914D1415200CAA3ED /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				769009DB14D73F5F00B296DE /* cat1.tga */,
 				763DED9614D1463F00CAA3ED /* Icon-72.png */,
 				763DED9714D1463F00CAA3ED /* Icon-Small-50.png */,
 				763DED9814D1463F00CAA3ED /* Icon-Small.png */,
