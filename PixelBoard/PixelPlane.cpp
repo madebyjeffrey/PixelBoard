@@ -23,6 +23,8 @@
 #include "matrix.h"
 #include "Shaders.h"
 
+#include "Image.h"
+
 void writeTGA(const char *filename, std::vector<PixelPlane::pixel_type> image);
 std::vector<PixelPlane::pixel_type> readTGA(const char *filename);
 
@@ -284,13 +286,17 @@ void PixelPlane::updateTexture()
             _image.push_back(p);
         }*/
     
+    Image img;
+    
     if (documentsLocation)
     {
         std::string str = std::string(documentsLocation);
         //        str += "/image.tga";
         str += "/cat1.tga";
         
-        _image = readTGA(str.c_str());
+            _image = readTGA(str.c_str());
+        //   img.loadTGA24(str);
+        //img.convertFormat(PixelFormat::ABGR4444);
 
         //        std::basic_fstream<pixel_type> of;
 /*        std::fstream of;
@@ -335,6 +341,7 @@ void PixelPlane::updateTexture()
         GetError();
     
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _vwidth, _vheight, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, _image.data());
+    //img.bufferTexture();
         GetError();
     
     

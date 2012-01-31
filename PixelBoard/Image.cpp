@@ -6,64 +6,222 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#ifndef PixelBoard_Image_cpp
-#define PixelBoard_Image_cpp
 
+#include <CoreFoundation/CoreFoundation.h>
+
+#include <cstdint>
+#include <cstdio>
+
+#include <fstream>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <type_traits>
+#include <iostream>
+#include <iterator>
+#include <array>
 
-class Image
+
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+
+#include "Image.h"
+
+
+#pragma pack(1)
+alignas(char) typedef struct {
+    uint8_t     id_len;                 // ID Field (Number of bytes - max 255)
+    uint8_t     map_type;               // Colormap Field (0 or 1)
+    uint8_t     img_type;               // Image Type (7 options - color vs. compression)
+    uint16_t    map_first;              // Color Map stuff - first entry index
+    uint16_t    map_len;                // Color Map stuff - total entries in file
+    uint8_t     map_entry_size;         // Color Map stuff - number of bits per entry
+    uint16_t    x;                      // X-coordinate of origin 
+    uint16_t    y;                      // Y-coordinate of origin
+    uint16_t    width;                  // Width in Pixels
+    uint16_t    height;                 // Height in Pixels
+    uint8_t    bpp;                    // Number of bits per pixel
+    uint8_t    descriptor;              // image descriptor
+                                        //    uint8_t     misc;                   // Other stuff - scan origin and alpha bits
+} targa_header;
+
+//static_assert(sizeof(targa_header)==18, "Targa Header is not 18 bytes");
+
+
+void Image::loadTGA(std::string const &name)
 {
-private:
-    unsigned _width, _height;
+    const size_t headerSize = 18;
+    std::array<uint8_t, headerSize> headerBytes;
+    std::ifstream tgaFile;
+    targa_header header;
     
-    void loadTGA24(std::string &name);
-    void saveTGA24(std::string &name);
-public:
-    enum PixelFormat
+    if (_good)
     {
-        BGRA4444,
-        RGBA8888,
-        RGBA5551
-    } type;
+        _data.clear();
+    }
     
-    enum FileFormat
+    tgaFile.open(name, std::ios::in | std::ios::binary);
+    
+    if (tgaFile.good())
     {
-        TGA24, TGA32
+        std::copy_n(std::istream_iterator<char>(tgaFile), headerSize, reinterpret_cast<char*>(headerBytes.data()));
+    }
+    
+    auto start = begin(headerBytes);
+    std::move(start, start+1, &header.id_len);
+    std::move(start+1, start+2, &header.map_type);
+    std::move(start+2, start+3, &header.img_type);
+    std::move(start+3, start+5, &header.map_first);         header.map_first = CFSwapInt16LittleToHost(header.map_first);
+    std::move(start+5, start+7, &header.map_len);           header.map_len = CFSwapInt16LittleToHost(header.map_len);
+    std::move(start+7, start+8, &header.map_entry_size);    
+    std::move(start+8, start+10, &header.x);                header.x = CFSwapInt16LittleToHost(header.x);
+    std::move(start+10, start+12, &header.y);               header.y = CFSwapInt16LittleToHost(header.y);
+    std::move(start+12, start+14, &header.width);           header.width = CFSwapInt16LittleToHost(header.width);
+    std::move(start+14, start+16, &header.height);          header.height = CFSwapInt16LittleToHost(header.height);
+    std::move(start+16, start+17, &header.bpp);             
+    std::move(start+17, start+18, &header.descriptor);
+    
+    tgaFile.seekg(header.id_len, std::ios_base::cur); // forward past the id field
+    
+    if (header.map_type == 1)
+    {
+        tgaFile.seekg(header.map_len * header.map_entry_size, std::ios_base::cur); // again, forward past the colour map
+    }
+    
+    switch (header.bpp)
+    {
+        case 24:
+        {
+            // load in 24 bit data
+            std::vector<std::array<uint8_t,3>> data;
+            size_t size = header.bpp >> 3 * header.width * header.height;
+            data.reserve(size / 3);
+            
+            std::copy_n(std::istream_iterator<char>(tgaFile), size, reinterpret_cast<char*>(data.data()));
+            
+            // convert to 32 bit data
+            std::vector<std::array<uint8_t,4>> data32;
+            data.reserve(header.width * header.height);
+            
+            std::transform(std::begin(data), std::end(data), std::begin(data32),
+                           [](std::array<uint8_t,3> in) -> decltype(std::array<uint8_t, 4>) {
+                               std::array<uint8_t,4> out;
+                               std::move(std::begin(in), std::end(in), std::begin(out));
+                               out[3] = 255; // alpha value
+                               return out;
+                           });
+            
+            break;
+        }
+            
     }
     
     
-    convertFormat(PixelFormat dest);
-    saveFile(FileFormat typ, std::string name);
-    loadFile(FileFormat typ, std::string name);
-};
+}
 
 void Image::loadTGA24(std::string &name)
 {
+    std::fstream f;
+    targa_header p;
+    
+    if (_data.size() > 0)
+        _data.clear();
+    
+    f.open(name, std::ios::in | std::ios::binary);
+    
+    if (f.good())
+    {
+        f.read(reinterpret_cast<char*>(&p), sizeof(p));
+        p.map_first = CFSwapInt16LittleToHost(p.map_first);
+        p.map_len = CFSwapInt16LittleToHost(p.map_len);
+        p.x = CFSwapInt16LittleToHost(p.x);
+        p.y = CFSwapInt16LittleToHost(p.y);
+        p.width = CFSwapInt16LittleToHost(p.width);
+        p.height = CFSwapInt16LittleToHost(p.height);
+        
+        f.seekg(p.id_len, std::ios_base::cur);  // forward past the id field
+        if (p.map_type == 1)
+        {
+            f.seekg(p.map_len * p.map_entry_size, std::ios_base::cur); // forward past the colour map - we do not handle this            
+        }
+        
+        // deal with the direction in the descriptor at some pointor
+        
+        if (p.bpp == 24 or p.bpp == 32)       // support 24 bit and 32 bit images
+        {
+            size_t image_size = p.width * p.height * (p.bpp >> 3);
+            _data.resize(image_size);
+            f.read((char*)&_data[0], image_size);
+            
+            // convert data from BGR888 to ABGR8888 if required
+            if (p.bpp == 24)
+            {
+                size_t new_size = p.width * p.height * 4;
+                
+                for (size_t i = new_size; i > 0; ++i)
+                {
+                    
+                }
+            }
+            
+            //_data = new uint8_t[image_size];
+            _good = true;
+            
+            _width = p.width;
+            _height = p.height;
+            _type = PixelFormat::RGBA8888;
+        
+            f.close();
+            
+            return;
+        }
+        f.close();
+    }
+    _good = false;
+    return;
+}
+
+void Image::convertFormat(PixelFormat dest)
+{
+    if (_type == PixelFormat::RGBA8888 && dest == PixelFormat::ABGR4444)
+    {
+        // is data size right?
+        if (_data.size() == _width * _height * 4)
+        {
+            std::cerr << "Converting from RGBA8888 to ABGR4444. Size of data is correct." << std::endl;
+            
+            for (int i = 0; i < _data.size() / 2; ++i)
+            {
+                _data[i] = (_data[2*i] >> 4) | (_data[2*i+1] & 0xF0);
+            }
+            
+            _data.resize(_data.size() / 2);
+            _type = PixelFormat::ABGR4444;
+        }
+        else
+        {
+            std::cerr << "Converting from RGBA8888 to BGRA4444. Size of data is not correct, should be " 
+                      << _width * _height * 4 << " but is " << _data.size() << std::endl;
+        }
+    }
+}
+
+void Image::bufferTexture()
+{
+    if (_type == PixelFormat::ABGR4444)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, _data.data());
+    }
     
 }
 
+#if 0
 void Image::saveTGA24(std::string &name)
 {
     
 }
 
-#include <stdio.h>
 
-
-typedef struct {
-    char id_len;                 // ID Field (Number of bytes - max 255)
-    char map_type;               // Colormap Field (0 or 1)
-    char img_type;               // Image Type (7 options - color vs. compression)
-    int  map_first;              // Color Map stuff - first entry index
-    int  map_len;                // Color Map stuff - total entries in file
-    char map_entry_size;         // Color Map stuff - number of bits per entry
-    int  x;                      // X-coordinate of origin 
-    int  y;                      // Y-coordinate of origin
-    int  width;                  // Width in Pixels
-    int  height;                 // Height in Pixels
-    char bpp;                    // Number of bits per pixel
-    char misc;                   // Other stuff - scan origin and alpha bits
-} targa_header;
 
 void writeheader(targa_header h, FILE *tga);
 void readheader(targa_header *h, FILE *tga);
@@ -201,5 +359,4 @@ std::vector<PixelPlane::pixel_type> readTGA(const char *filename)
     
     return pixs;
 }
-
 #endif

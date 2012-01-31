@@ -31,6 +31,7 @@
 		763DEDA114D1465400CAA3ED /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9A14D1463F00CAA3ED /* Icon.png */; };
 		763DEDA214D1465800CAA3ED /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9B14D1463F00CAA3ED /* Icon@2x.png */; };
 		763DEDA314D1465D00CAA3ED /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9C14D1463F00CAA3ED /* iTunesArtwork */; };
+		769009DF14D7C88000B296DE /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7611B79614D70E5300F2EE82 /* Image.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		763DED9B14D1463F00CAA3ED /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		763DED9C14D1463F00CAA3ED /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		769009DB14D73F5F00B296DE /* cat1.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = cat1.tga; sourceTree = "<group>"; };
+		769009DE14D7604800B296DE /* Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +142,7 @@
 				763DED6C14D1381900CAA3ED /* Supporting Files */,
 				7604820D14D5D5B90001C723 /* error.h */,
 				7611B79614D70E5300F2EE82 /* Image.cpp */,
+				769009DE14D7604800B296DE /* Image.h */,
 			);
 			path = PixelBoard;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				769009DF14D7C88000B296DE /* Image.cpp in Sources */,
 				763DED9514D143EC00CAA3ED /* Shaders.cpp in Sources */,
 				763DED9414D143E900CAA3ED /* matrix.cpp in Sources */,
 				763DED7214D1381900CAA3ED /* main.m in Sources */,
@@ -296,7 +300,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -315,7 +319,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
