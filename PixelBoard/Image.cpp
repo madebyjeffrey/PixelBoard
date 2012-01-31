@@ -47,6 +47,14 @@ alignas(char) typedef struct {
 
 //static_assert(sizeof(targa_header)==18, "Targa Header is not 18 bytes");
 
+auto RGB2RGBA(std::array<uint8_t,3> in) -> decltype(std::array<uint8_t,4>())
+{
+    std::array<uint8_t,4> out;
+    std::move(std::begin(in), std::end(in), std::begin(out));
+    out[3] = 255; // alpha value
+    return out;
+}
+
 
 void Image::loadTGA(std::string const &name)
 {
@@ -101,22 +109,43 @@ void Image::loadTGA(std::string const &name)
             
             // convert to 32 bit data
             std::vector<std::array<uint8_t,4>> data32;
-            data.reserve(header.width * header.height);
+            data32.reserve(header.width * header.height);
             
-            std::transform(std::begin(data), std::end(data), std::begin(data32),
-                           [](std::array<uint8_t,3> in) -> decltype(std::array<uint8_t, 4>) {
-                               std::array<uint8_t,4> out;
-                               std::move(std::begin(in), std::end(in), std::begin(out));
-                               out[3] = 255; // alpha value
-                               return out;
-                           });
+            std::transform(std::begin(data), std::end(data), std::begin(data32), RGB2RGBA);
+
+            _data.reserve(data32.size() * sizeof(std::array<uint8_t,4>));
+            
+            std::move(reinterpret_cast<uint8_t*>(data32.data()), reinterpret_cast<uint8_t*>(data32.data()) + data32.size() * sizeof(std::array<uint8_t, 4>),
+                      _data.begin());
+            
+            _good = true;
+            _width = header.width;
+            _height = header.height;
+            _type = RGBA8888;
             
             break;
         }
+        case 32:
+        {
+            // load in 32 bit data
+            size_t size = header.width * header.height * 4;
+            _data.reserve(size);
+            std::copy_n(std::istream_iterator<char>(tgaFile), size, _data.begin());
             
+            _good = true;
+            _width = header.width;
+            _height = header.height;
+            _type = RGBA8888;
+            break;
+        }
+        default:
+        {
+            std::cerr << "TGA file format not supported." << std::endl;
+            _good = false;
+        }   
     }
     
-    
+    tgaFile.close();
 }
 
 void Image::loadTGA24(std::string &name)
