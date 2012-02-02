@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#if defined (__OBJC2__)
+
 #import <UIKit/UIKit.h>
 
 @class ViewController;
@@ -17,3 +19,14 @@
 @property (strong, nonatomic) ViewController *viewController;
 
 @end
+
+#endif
+
+#if defined (__cplusplus)
+
+#include <string>
+
+extern std::string documentsFolder;
+extern std::string resourcesFolder;
+
+#endif

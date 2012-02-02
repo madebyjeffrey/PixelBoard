@@ -28,8 +28,7 @@
 #include "Image.h"
 
 
-#pragma pack(1)
-alignas(char) typedef struct {
+typedef struct {
     uint8_t     id_len;                 // ID Field (Number of bytes - max 255)
     uint8_t     map_type;               // Colormap Field (0 or 1)
     uint8_t     img_type;               // Image Type (7 options - color vs. compression)
@@ -55,6 +54,24 @@ auto RGB2RGBA(std::array<uint8_t,3> in) -> decltype(std::array<uint8_t,4>())
     return out;
 }
 
+auto RGBA8888_RGBA4444(std::array<uint8_t,4> in) -> decltype(std::array<uint8_t,2>())
+{
+    std::array<uint8_t,2> out;
+    out[0] = (in[1] >> 4) | (in[0] & 0xF0);
+    out[1] = (in[3] >> 4) | (in[2] & 0xF0);
+    return out;
+}
+
+auto RGBA8888_ABGR4444(std::array<uint8_t,4> in) -> decltype(std::array<uint8_t,2>())
+{   // out[0] low = alpha  out[0] high = blue
+    // out[1] low = green  out[1] high = red
+    std::array<uint8_t,2> out;
+    out[0] = (in[2] & 0XF0) | (in[3] >> 4);
+    out[1] = (in[1] & 0xF0) | (in[0] >> 4); //| (in[3] & 0xF0);
+    return out;
+}
+
+//
 
 void Image::loadTGA(std::string const &name)
 {
@@ -72,22 +89,26 @@ void Image::loadTGA(std::string const &name)
     
     if (tgaFile.good())
     {
-        std::copy_n(std::istream_iterator<char>(tgaFile), headerSize, reinterpret_cast<char*>(headerBytes.data()));
+        tgaFile.read((char*)headerBytes.data(), headerSize);
+        //std::copy_n(std::istream_iterator<char>(tgaFile), headerSize, reinterpret_cast<char*>(headerBytes.data()));
     }
     
-    auto start = begin(headerBytes);
-    std::move(start, start+1, &header.id_len);
-    std::move(start+1, start+2, &header.map_type);
-    std::move(start+2, start+3, &header.img_type);
-    std::move(start+3, start+5, &header.map_first);         header.map_first = CFSwapInt16LittleToHost(header.map_first);
-    std::move(start+5, start+7, &header.map_len);           header.map_len = CFSwapInt16LittleToHost(header.map_len);
-    std::move(start+7, start+8, &header.map_entry_size);    
-    std::move(start+8, start+10, &header.x);                header.x = CFSwapInt16LittleToHost(header.x);
-    std::move(start+10, start+12, &header.y);               header.y = CFSwapInt16LittleToHost(header.y);
-    std::move(start+12, start+14, &header.width);           header.width = CFSwapInt16LittleToHost(header.width);
-    std::move(start+14, start+16, &header.height);          header.height = CFSwapInt16LittleToHost(header.height);
-    std::move(start+16, start+17, &header.bpp);             
-    std::move(start+17, start+18, &header.descriptor);
+    for (int i = 0; i < headerSize; ++i)
+        std::cerr << "item " << i << " is " << (int)headerBytes[i] << std::endl;
+
+    header.id_len = headerBytes[0];
+    header.map_type = headerBytes[1];
+    header.img_type = headerBytes[2];
+    header.map_first = headerBytes[3] | (headerBytes[4] << 8);
+    header.map_len = headerBytes[5] | (headerBytes[6] << 8);
+    header.map_entry_size = headerBytes[7];
+    header.x = headerBytes[8] | (headerBytes[9] << 8);
+    header.y = headerBytes[10] | (headerBytes[11] << 8);
+    header.width = headerBytes[12] | (headerBytes[13] << 8);
+    header.height = headerBytes[14] | (headerBytes[15] << 8);
+    header.bpp = headerBytes[16];
+    header.descriptor = headerBytes[17];
+    
     
     tgaFile.seekg(header.id_len, std::ios_base::cur); // forward past the id field
     
@@ -100,22 +121,29 @@ void Image::loadTGA(std::string const &name)
     {
         case 24:
         {
-            // load in 24 bit data
-            std::vector<std::array<uint8_t,3>> data;
-            size_t size = header.bpp >> 3 * header.width * header.height;
-            data.reserve(size / 3);
+            typedef std::array<uint8_t, 4> RGBA;
+            typedef std::array<uint8_t, 3> RGB;
             
-            std::copy_n(std::istream_iterator<char>(tgaFile), size, reinterpret_cast<char*>(data.data()));
+            // load in 24 bit data
+            size_t size = (header.bpp >> 3) * header.width * header.height;
+            std::vector<RGB> data24(size / 3);
+            //data24.resize(data24.capacity());
+
+            tgaFile.read(reinterpret_cast<char*>(data24.data()), size);
+            //            std::copy_n(std::istream_iterator<char>(tgaFile), size, reinterpret_cast<char*>(data.data()));
             
             // convert to 32 bit data
-            std::vector<std::array<uint8_t,4>> data32;
-            data32.reserve(header.width * header.height);
+            std::vector<RGBA> data32(header.width * header.height);
+            //data32.resize(data32.capacity());
             
-            std::transform(std::begin(data), std::end(data), std::begin(data32), RGB2RGBA);
+            std::cerr << "data's data: " << data24.data() << " size: " << data24.size() << std::endl;
+            std::cerr << "data32's data: " << data32.data() << " size: " << data32.size() << std::endl;
+            
+            std::transform(std::begin(data24), std::end(data24), std::begin(data32), RGB2RGBA);
 
-            _data.reserve(data32.size() * sizeof(std::array<uint8_t,4>));
+            _data.resize(data32.size() * sizeof(std::array<uint8_t,4>));
             
-            std::move(reinterpret_cast<uint8_t*>(data32.data()), reinterpret_cast<uint8_t*>(data32.data()) + data32.size() * sizeof(std::array<uint8_t, 4>),
+            std::move(reinterpret_cast<uint8_t*>(data32.data()), reinterpret_cast<uint8_t*>(data32.data()) + data32.size() * sizeof(RGBA),
                       _data.begin());
             
             _good = true;
@@ -148,68 +176,6 @@ void Image::loadTGA(std::string const &name)
     tgaFile.close();
 }
 
-void Image::loadTGA24(std::string &name)
-{
-    std::fstream f;
-    targa_header p;
-    
-    if (_data.size() > 0)
-        _data.clear();
-    
-    f.open(name, std::ios::in | std::ios::binary);
-    
-    if (f.good())
-    {
-        f.read(reinterpret_cast<char*>(&p), sizeof(p));
-        p.map_first = CFSwapInt16LittleToHost(p.map_first);
-        p.map_len = CFSwapInt16LittleToHost(p.map_len);
-        p.x = CFSwapInt16LittleToHost(p.x);
-        p.y = CFSwapInt16LittleToHost(p.y);
-        p.width = CFSwapInt16LittleToHost(p.width);
-        p.height = CFSwapInt16LittleToHost(p.height);
-        
-        f.seekg(p.id_len, std::ios_base::cur);  // forward past the id field
-        if (p.map_type == 1)
-        {
-            f.seekg(p.map_len * p.map_entry_size, std::ios_base::cur); // forward past the colour map - we do not handle this            
-        }
-        
-        // deal with the direction in the descriptor at some pointor
-        
-        if (p.bpp == 24 or p.bpp == 32)       // support 24 bit and 32 bit images
-        {
-            size_t image_size = p.width * p.height * (p.bpp >> 3);
-            _data.resize(image_size);
-            f.read((char*)&_data[0], image_size);
-            
-            // convert data from BGR888 to ABGR8888 if required
-            if (p.bpp == 24)
-            {
-                size_t new_size = p.width * p.height * 4;
-                
-                for (size_t i = new_size; i > 0; ++i)
-                {
-                    
-                }
-            }
-            
-            //_data = new uint8_t[image_size];
-            _good = true;
-            
-            _width = p.width;
-            _height = p.height;
-            _type = PixelFormat::RGBA8888;
-        
-            f.close();
-            
-            return;
-        }
-        f.close();
-    }
-    _good = false;
-    return;
-}
-
 void Image::convertFormat(PixelFormat dest)
 {
     if (_type == PixelFormat::RGBA8888 && dest == PixelFormat::ABGR4444)
@@ -219,13 +185,28 @@ void Image::convertFormat(PixelFormat dest)
         {
             std::cerr << "Converting from RGBA8888 to ABGR4444. Size of data is correct." << std::endl;
             
-            for (int i = 0; i < _data.size() / 2; ++i)
-            {
-                _data[i] = (_data[2*i] >> 4) | (_data[2*i+1] & 0xF0);
-            }
+            typedef std::array<uint8_t, 4> RGBA8888;
+            typedef std::array<uint8_t, 2> RGBA4444;
             
-            _data.resize(_data.size() / 2);
+            RGBA8888 *data32 = reinterpret_cast<RGBA8888*>(_data.data());
+            
+            std::cerr << "Pixel 0 @ 32: " << (int)data32[0][0] << ", " << (int)data32[0][1] << ", " << (int)data32[0][2] << ", " << (int)data32[0][3] << std::endl;
+            
+            std::vector<RGBA4444> data16(_width * _height);
+            
+            std::transform(data32, data32 + _width * _height, std::begin(data16), RGBA8888_ABGR4444);
+            
+            _data.clear();
+            _data.reserve(_width * _height * 2);
+            std::move(reinterpret_cast<uint8_t*>(data16.data()), reinterpret_cast<uint8_t*>(data16.data()) + _width * _height * 2,
+                      std::begin(_data));
+            
+            std::cerr << "Pixel 0 @ 16: " << (int)((_data[0] & 0xf0) >> 4) << ", " << (int)(_data[0] & 0x0f) << ", " 
+            << (int)((_data[1] & 0xf0) >> 4) << ", " << (int)(_data[1] & 0x0f) << std::endl;
+            
             _type = PixelFormat::ABGR4444;
+            
+            return;
         }
         else
         {

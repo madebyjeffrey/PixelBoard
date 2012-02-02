@@ -9,19 +9,19 @@
 /* Begin PBXBuildFile section */
 		7604820514D288E60001C723 /* PixelPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7604820414D288E60001C723 /* PixelPlane.cpp */; };
 		7604820F14D5ED580001C723 /* QuadTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7604820E14D5ED580001C723 /* QuadTest.cpp */; };
+		760FF59814DA1092006F5DAF /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 760FF59714DA1092006F5DAF /* lodepng.cpp */; };
+		760FF59D14DA62BE006F5DAF /* cat1.png in Resources */ = {isa = PBXBuildFile; fileRef = 760FF59C14DA62BE006F5DAF /* cat1.png */; };
 		763DED6614D1381900CAA3ED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED6514D1381900CAA3ED /* UIKit.framework */; };
 		763DED6814D1381900CAA3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED6714D1381900CAA3ED /* Foundation.framework */; };
 		763DED6A14D1381900CAA3ED /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED6914D1381900CAA3ED /* CoreGraphics.framework */; };
 		763DED7014D1381900CAA3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 763DED6E14D1381900CAA3ED /* InfoPlist.strings */; };
-		763DED7214D1381900CAA3ED /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 763DED7114D1381900CAA3ED /* main.m */; };
+		763DED7214D1381900CAA3ED /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 763DED7114D1381900CAA3ED /* main.mm */; };
 		763DED7614D1381900CAA3ED /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 763DED7514D1381900CAA3ED /* AppDelegate.mm */; };
 		763DED7914D1381A00CAA3ED /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 763DED7814D1381A00CAA3ED /* ViewController.mm */; };
 		763DED7C14D1381A00CAA3ED /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 763DED7A14D1381A00CAA3ED /* ViewController.xib */; };
 		763DED8414D1384B00CAA3ED /* PixelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 763DED8314D1384B00CAA3ED /* PixelView.mm */; };
 		763DED8614D138D000CAA3ED /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED8514D138D000CAA3ED /* QuartzCore.framework */; };
 		763DED8814D138ED00CAA3ED /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763DED8714D138EC00CAA3ED /* OpenGLES.framework */; };
-		763DED8E14D1417D00CAA3ED /* template.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 763DED8B14D1416100CAA3ED /* template.vsh */; };
-		763DED8F14D1418300CAA3ED /* template.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 763DED8A14D1416100CAA3ED /* template.fsh */; };
 		763DED9414D143E900CAA3ED /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 763DED9314D1435300CAA3ED /* matrix.cpp */; };
 		763DED9514D143EC00CAA3ED /* Shaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 763DED9114D141C900CAA3ED /* Shaders.cpp */; };
 		763DED9D14D1464700CAA3ED /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9614D1463F00CAA3ED /* Icon-72.png */; };
@@ -32,6 +32,7 @@
 		763DEDA214D1465800CAA3ED /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9B14D1463F00CAA3ED /* Icon@2x.png */; };
 		763DEDA314D1465D00CAA3ED /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 763DED9C14D1463F00CAA3ED /* iTunesArtwork */; };
 		769009DF14D7C88000B296DE /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7611B79614D70E5300F2EE82 /* Image.cpp */; };
+		76C1F47C14D8DA1C00D407EF /* Image2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76C1F47B14D8DA1C00D407EF /* Image2.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,10 @@
 		7604820D14D5D5B90001C723 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		7604820E14D5ED580001C723 /* QuadTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuadTest.cpp; sourceTree = "<group>"; };
 		7604821014D5ED640001C723 /* QuadTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuadTest.h; sourceTree = "<group>"; };
+		760FF59714DA1092006F5DAF /* lodepng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lodepng.cpp; sourceTree = "<group>"; };
+		760FF59914DA109B006F5DAF /* lodepng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
+		760FF59A14DA10CC006F5DAF /* lodepng_examples.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lodepng_examples.cpp; sourceTree = "<group>"; };
+		760FF59C14DA62BE006F5DAF /* cat1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cat1.png; sourceTree = "<group>"; };
 		7611B79614D70E5300F2EE82 /* Image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		763DED6114D1381900CAA3ED /* PixelBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		763DED6514D1381900CAA3ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -47,7 +52,7 @@
 		763DED6914D1381900CAA3ED /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		763DED6D14D1381900CAA3ED /* PixelBoard-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PixelBoard-Info.plist"; sourceTree = "<group>"; };
 		763DED6F14D1381900CAA3ED /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		763DED7114D1381900CAA3ED /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		763DED7114D1381900CAA3ED /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		763DED7314D1381900CAA3ED /* PixelBoard-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PixelBoard-Prefix.pch"; sourceTree = "<group>"; };
 		763DED7414D1381900CAA3ED /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		763DED7514D1381900CAA3ED /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -58,8 +63,6 @@
 		763DED8314D1384B00CAA3ED /* PixelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PixelView.mm; sourceTree = "<group>"; };
 		763DED8514D138D000CAA3ED /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		763DED8714D138EC00CAA3ED /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		763DED8A14D1416100CAA3ED /* template.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = template.fsh; sourceTree = "<group>"; };
-		763DED8B14D1416100CAA3ED /* template.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = template.vsh; sourceTree = "<group>"; };
 		763DED9014D141C900CAA3ED /* Shaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shaders.h; sourceTree = "<group>"; };
 		763DED9114D141C900CAA3ED /* Shaders.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shaders.cpp; sourceTree = "<group>"; };
 		763DED9214D1435300CAA3ED /* matrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
@@ -73,6 +76,8 @@
 		763DED9C14D1463F00CAA3ED /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		769009DB14D73F5F00B296DE /* cat1.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = cat1.tga; sourceTree = "<group>"; };
 		769009DE14D7604800B296DE /* Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		76C1F47B14D8DA1C00D407EF /* Image2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Image2.cpp; sourceTree = "<group>"; };
+		76C1F47E14D8DA2C00D407EF /* Image2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Image2.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +96,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		760FF59514DA1078006F5DAF /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				760FF59A14DA10CC006F5DAF /* lodepng_examples.cpp */,
+				76C1F47B14D8DA1C00D407EF /* Image2.cpp */,
+				76C1F47E14D8DA2C00D407EF /* Image2.h */,
+				760FF59714DA1092006F5DAF /* lodepng.cpp */,
+				760FF59914DA109B006F5DAF /* lodepng.h */,
+			);
+			name = Library;
+			sourceTree = "<group>";
+		};
 		763DED5614D1381900CAA3ED = {
 			isa = PBXGroup;
 			children = (
@@ -123,6 +140,7 @@
 		763DED6B14D1381900CAA3ED /* PixelBoard */ = {
 			isa = PBXGroup;
 			children = (
+				760FF59514DA1078006F5DAF /* Library */,
 				763DED9214D1435300CAA3ED /* matrix.h */,
 				763DED9314D1435300CAA3ED /* matrix.cpp */,
 				763DED9014D141C900CAA3ED /* Shaders.h */,
@@ -152,7 +170,7 @@
 			children = (
 				763DED6D14D1381900CAA3ED /* PixelBoard-Info.plist */,
 				763DED6E14D1381900CAA3ED /* InfoPlist.strings */,
-				763DED7114D1381900CAA3ED /* main.m */,
+				763DED7114D1381900CAA3ED /* main.mm */,
 				763DED7314D1381900CAA3ED /* PixelBoard-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -161,6 +179,7 @@
 		763DED8914D1415200CAA3ED /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				760FF59C14DA62BE006F5DAF /* cat1.png */,
 				769009DB14D73F5F00B296DE /* cat1.tga */,
 				763DED9614D1463F00CAA3ED /* Icon-72.png */,
 				763DED9714D1463F00CAA3ED /* Icon-Small-50.png */,
@@ -169,8 +188,6 @@
 				763DED9A14D1463F00CAA3ED /* Icon.png */,
 				763DED9B14D1463F00CAA3ED /* Icon@2x.png */,
 				763DED9C14D1463F00CAA3ED /* iTunesArtwork */,
-				763DED8A14D1416100CAA3ED /* template.fsh */,
-				763DED8B14D1416100CAA3ED /* template.vsh */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -234,8 +251,7 @@
 				763DEDA314D1465D00CAA3ED /* iTunesArtwork in Resources */,
 				763DED7014D1381900CAA3ED /* InfoPlist.strings in Resources */,
 				763DED7C14D1381A00CAA3ED /* ViewController.xib in Resources */,
-				763DED8E14D1417D00CAA3ED /* template.vsh in Resources */,
-				763DED8F14D1418300CAA3ED /* template.fsh in Resources */,
+				760FF59D14DA62BE006F5DAF /* cat1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,12 +265,14 @@
 				769009DF14D7C88000B296DE /* Image.cpp in Sources */,
 				763DED9514D143EC00CAA3ED /* Shaders.cpp in Sources */,
 				763DED9414D143E900CAA3ED /* matrix.cpp in Sources */,
-				763DED7214D1381900CAA3ED /* main.m in Sources */,
+				763DED7214D1381900CAA3ED /* main.mm in Sources */,
 				763DED7614D1381900CAA3ED /* AppDelegate.mm in Sources */,
 				763DED7914D1381A00CAA3ED /* ViewController.mm in Sources */,
 				763DED8414D1384B00CAA3ED /* PixelView.mm in Sources */,
 				7604820514D288E60001C723 /* PixelPlane.cpp in Sources */,
 				7604820F14D5ED580001C723 /* QuadTest.cpp in Sources */,
+				76C1F47C14D8DA1C00D407EF /* Image2.cpp in Sources */,
+				760FF59814DA1092006F5DAF /* lodepng.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +350,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PixelBoard/PixelBoard-Prefix.pch";
@@ -346,6 +365,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PixelBoard/PixelBoard-Prefix.pch";

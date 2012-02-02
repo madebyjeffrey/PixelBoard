@@ -18,12 +18,18 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
+#include "AppDelegate.h"
+
 #include "PixelPlane.h"
 #include "error.h"
 #include "matrix.h"
 #include "Shaders.h"
 
-#include "Image.h"
+//#include "Image.h"
+
+#include "Image2.h"
+#include "lodepng.h"
+
 
 void writeTGA(const char *filename, std::vector<PixelPlane::pixel_type> image);
 std::vector<PixelPlane::pixel_type> readTGA(const char *filename);
@@ -53,7 +59,7 @@ static char const * fragmentShader = R"(
     uniform sampler2D g_texture;
 
     void main(void) {        
-        gl_FragColor = texture2D(s_texture, texture) * (texture2D(g_texture, texture).a);
+        gl_FragColor = texture2D(s_texture, texture); // * (texture2D(g_texture, texture).a);
     }
 )";
 
@@ -286,6 +292,16 @@ void PixelPlane::updateTexture()
             _image.push_back(p);
         }*/
     
+    std::vector<unsigned char> data;
+    unsigned w, h;
+    
+    LodePNG::decode(data, w, h, resourcesFolder + "/cat1.png");
+    Image<RGBA8888> image(w, h, transmogrify(data));
+    
+    auto texture = image_cast<RGB565>(image);
+    
+    
+  /*  
     Image img;
     
     if (documentsLocation)
@@ -294,11 +310,11 @@ void PixelPlane::updateTexture()
         //        str += "/image.tga";
         str += "/cat1.tga";
         
-            _image = readTGA(str.c_str());
-        //   img.loadTGA24(str);
-        //img.convertFormat(PixelFormat::ABGR4444);
+        //            _image = readTGA(str.c_str());
+        img.loadTGA(str);
+        img.convertFormat(PixelFormat::ABGR4444);
 
-        //        std::basic_fstream<pixel_type> of;
+        //        std::basic_fstream<pixel_type> of;*/
 /*        std::fstream of;
         of.open(str, std::ios::out);
 
@@ -311,7 +327,7 @@ void PixelPlane::updateTexture()
         
         of.close();*/
         //        writeTGA(str.c_str(), _image);
-    }
+        //    }
     
     //    pixel_type blue = { 0, 15, 15, 15 };
     //    std::fill_n(std::begin(_image), _vwidth * _vheight * 0.95, blue);
@@ -340,8 +356,8 @@ void PixelPlane::updateTexture()
     glBindTexture(GL_TEXTURE_2D, _texture);
         GetError();
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _vwidth, _vheight, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, _image.data());
-    //img.bufferTexture();
+    //    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _vwidth, _vheight, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, _image.data());
+    img.bufferTexture();
         GetError();
     
     

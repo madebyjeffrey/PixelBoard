@@ -10,6 +10,9 @@
 
 #import "ViewController.h"
 
+std::string documentsFolder;
+std::string resourcesFolder;
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -18,6 +21,13 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [[UIApplication sharedApplication] setStatusBarHidden: YES];
+    
+    NSArray *s = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    documentsFolder = [[s objectAtIndex:0] UTF8String];
+    
+    NSBundle *r = [NSBundle mainBundle];
+    NSURL *res = [r resourceURL];
+    resourcesFolder = [[res path] UTF8String];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
